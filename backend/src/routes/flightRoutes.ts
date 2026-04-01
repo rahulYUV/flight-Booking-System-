@@ -1,10 +1,45 @@
 import express from 'express';
-import { getFlights, createFlight, getFlightById, updateFlight, deleteFlight } from '../controllers/flightController';
+import { getFlights, createFlight, getFlightById, updateFlight, deleteFlight, searchTrips } from '../controllers/flightController';
+import { getLiveStatus } from '../controllers/liveFlightController';
 import { protect } from '../middleware/authMiddleware';
 import { validate } from '../middleware/validateMiddleware';
-import { updateFlightSchema } from '../validators';
+import { updateFlightSchema, createFlightSchema } from '../validators';
 
 const router = express.Router();
+
+/**
+ * @swagger
+ * /api/flights/live/{flightNumber}:
+ *   get:
+ *     summary: Track a flight in real-time (Aviationstack Integration)
+ *     parameters:
+ *       - in: path
+ *         name: flightNumber
+ *         required: true
+ *         description: IATA Flight Number (e.g., 6E2134)
+ */
+router.get('/live/:flightNumber', getLiveStatus);
+
+/**
+ * @swagger
+ * /api/flights/search-trips:
+ *   get:
+ *     summary: Advanced Search for Trips (One-way or Round-trip)
+ *     parameters:
+ *       - in: query
+ *         name: source
+ *         required: true
+ *       - in: query
+ *         name: destination
+ *         required: true
+ *       - in: query
+ *         name: departureDate
+ *         required: true
+ *       - in: query
+ *         name: returnDate
+ *         description: If provided, logic becomes Round-trip
+ */
+router.get('/search-trips', searchTrips);
 
 /**
  * @swagger
@@ -53,7 +88,7 @@ const router = express.Router();
  *       201:
  *         description: Flight generated successfully
  */
-router.route('/').get(getFlights).post(protect, createFlight);
+router.route('/').get(getFlights).post(protect, validate(createFlightSchema), createFlight);
 
 /**
  * @swagger
