@@ -37,32 +37,53 @@ const importData = async () => {
       {
         flightNumber: '6E-101',
         airline: 'IndiGo',
+        airlineLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/IndiGo_Airlines_logo.svg/1200px-IndiGo_Airlines_logo.svg.png',
         source: 'Delhi (DEL)',
         destination: 'Mumbai (BOM)',
-        departureTime: new Date(new Date().getTime() + 24 * 60 * 60 * 1000), // Flight tomorrow
-        arrivalTime: new Date(new Date().getTime() + 26 * 60 * 60 * 1000),
+        departureTime: new Date(new Date().setHours(10, 0, 0, 0) + 24 * 60 * 60 * 1000), 
+        arrivalTime: new Date(new Date().setHours(12, 15, 0, 0) + 24 * 60 * 60 * 1000),
+        duration: 135,
         price: 5500,
         availableSeats: 180,
+        stops: 0,
+        cabinClass: 'Economy',
+        amenities: ['Veg Meal', 'Extra Legroom', 'USB Power'],
+        isRefundable: false,
+        baggageInfo: { carryOn: '7kg', checked: '15kg' }
       },
       {
-        flightNumber: '6E-205',
-        airline: 'IndiGo',
+        flightNumber: 'AI-802',
+        airline: 'Air India',
+        airlineLogo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Air_India_Logo_2023.svg/1200px-Air_India_Logo_2023.svg.png',
         source: 'Mumbai (BOM)',
         destination: 'Bangalore (BLR)',
-        departureTime: new Date(new Date().getTime() + 48 * 60 * 60 * 1000), // Flight in 2 days
-        arrivalTime: new Date(new Date().getTime() + 50 * 60 * 60 * 1000),
-        price: 4200,
+        departureTime: new Date(new Date().setHours(14, 30, 0, 0) + 48 * 60 * 60 * 1000),
+        arrivalTime: new Date(new Date().setHours(16, 15, 0, 0) + 48 * 60 * 60 * 1000),
+        duration: 105,
+        price: 7200,
         availableSeats: 150,
+        stops: 0,
+        cabinClass: 'Business',
+        amenities: ['Premium Dining', 'Flat Bed', 'Priority Boarding', 'WiFi'],
+        isRefundable: true,
+        baggageInfo: { carryOn: '10kg', checked: '35kg' }
       },
       {
-        flightNumber: '6E-310',
-        airline: 'IndiGo',
+        flightNumber: 'UK-950',
+        airline: 'Vistara',
+        airlineLogo: 'https://upload.wikimedia.org/wikipedia/en/thumb/d/d5/Vistara_Logo.svg/1200px-Vistara_Logo.svg.png',
         source: 'Bangalore (BLR)',
         destination: 'Delhi (DEL)',
-        departureTime: new Date(new Date().getTime() + 72 * 60 * 60 * 1000), // Flight in 3 days
-        arrivalTime: new Date(new Date().getTime() + 74 * 60 * 60 * 1000),
-        price: 6800,
-        availableSeats: 12, // Almost full
+        departureTime: new Date(new Date().setHours(18, 0, 0, 0) + 72 * 60 * 60 * 1000),
+        arrivalTime: new Date(new Date().setHours(23, 45, 0, 0) + 72 * 60 * 60 * 1000),
+        duration: 345,
+        price: 9800,
+        availableSeats: 12,
+        stops: 1,
+        cabinClass: 'Premium Economy',
+        amenities: ['Select Seats', 'In-flight Entertainment', 'Luxury Dining'],
+        isRefundable: true,
+        baggageInfo: { carryOn: '12kg', checked: '25kg' }
       }
     ];
 

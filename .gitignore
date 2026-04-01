@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.DS_Store
+*.log
+git_status_output.txt
+backend/node_modules/
+frontend/node_modules/
+backend/dist/
+frontend/dist/
+backend/.env
+frontend/.env

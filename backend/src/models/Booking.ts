@@ -5,7 +5,10 @@ export interface IBooking extends Document {
   userId: mongoose.Types.ObjectId;
   passengerName: string;
   seatNumber: string;
-  paymentStatus: string;
+  mealPreference: 'Veg' | 'Non-Veg' | 'None';
+  totalPrice: number;
+  paymentStatus: 'Pending' | 'Completed' | 'Refunded';
+  bookingStatus: 'Confirmed' | 'Cancelled';
 }
 
 const BookingSchema: Schema = new Schema({
@@ -13,13 +16,25 @@ const BookingSchema: Schema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   passengerName: { type: String, required: true },
   seatNumber: { type: String, required: true },
+  mealPreference: { 
+    type: String, 
+    enum: ['Veg', 'Non-Veg', 'None'], 
+    default: 'None' 
+  },
+  totalPrice: { type: Number, required: true },
   paymentStatus: { 
     type: String, 
-    enum: ['Pending', 'Completed', 'Cancelled'], 
+    enum: ['Pending', 'Completed', 'Refunded'], 
     default: 'Pending' 
+  },
+  bookingStatus: {
+    type: String,
+    enum: ['Confirmed', 'Cancelled'],
+    default: 'Confirmed'
   }
 }, {
   timestamps: true
 });
+
 
 export default mongoose.model<IBooking>('Booking', BookingSchema);
