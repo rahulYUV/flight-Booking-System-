@@ -4,42 +4,40 @@ import Flight from '../../models/Flight';
 
 describe('Flight Controller API Tests', () => {
 
-  it('GET /api/flights/ returns an empty array initially', async () => {
-    // 1. Arrange & Act: Send a fake HTTP GET request to our app
+  it('GET /api/flights/ returns an empty array initially with pagination', async () => {
     const response = await request(app)
       .get('/api/flights/')
       .send();
 
-    // 2. Assert: Verify the server responds with a 200 OK status
     expect(response.status).toBe(200);
-    
-    // 3. Assert: Verify the JSON body is blank because the memory DB is empty
-    expect(response.body).toEqual([]);
+    expect(response.body.flights).toEqual([]);
+    expect(response.body.total).toBe(0);
+    expect(response.body.page).toBe(1);
   });
 
   it('GET /api/flights/ can fetch an existing flight from the database', async () => {
-    // 1. Arrange: Manually insert a mock flight straight into the memory database
     await Flight.create({
       flightNumber: '6E-999',
       airline: 'IndiGo Mock',
+      airlineLogo: 'https://example.com/logo.png',
       source: 'Delhi (DEL)',
       destination: 'Chennai (MAA)',
       departureTime: new Date(),
       arrivalTime: new Date(),
+      duration: 180,
       price: 3500,
       availableSeats: 50,
+      cabinClass: 'Economy'
     });
 
-    // 2. Act: Call the search API route over Supertest
     const response = await request(app)
       .get('/api/flights/')
       .send();
 
-    // 3. Assert: We expect exactly 1 flight, and verify its distinct details
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(1);
-    expect(response.body[0].flightNumber).toBe('6E-999');
-    expect(response.body[0].airline).toBe('IndiGo Mock');
+    expect(response.body.flights.length).toBe(1);
+    expect(response.body.flights[0].flightNumber).toBe('6E-999');
+    expect(response.body.flights[0].airline).toBe('IndiGo Mock');
   });
 
   it('POST /api/flights/ returns 401 Unauthorized for unauthenticated users', async () => {

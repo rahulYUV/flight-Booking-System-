@@ -32,7 +32,7 @@ describe('Validate Middleware Unit Tests', () => {
     middleware(mockRequest as Request, mockResponse as Response, nextFunction);
 
     expect(nextFunction).toHaveBeenCalledTimes(1);
-    expect(nextFunction).toHaveBeenCalledWith(); // Called cleanly without errors
+    expect(nextFunction).toHaveBeenCalledWith();
     expect(mockResponse.status).not.toHaveBeenCalled();
   });
 
@@ -45,7 +45,7 @@ describe('Validate Middleware Unit Tests', () => {
 
     // Provide a number instead of the required string
     mockRequest = {
-      body: { username: 123 }, 
+      body: { username: 123 },
       query: {},
       params: {}
     };
@@ -54,12 +54,11 @@ describe('Validate Middleware Unit Tests', () => {
     middleware(mockRequest as Request, mockResponse as Response, nextFunction);
 
     expect(mockResponse.status).toHaveBeenCalledWith(400);
-    expect(mockResponse.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: 'Invalid Input Type',
-        errors: expect.any(Array) // Asserts that Zod generated an error list
-      })
-    );
+    expect(mockResponse.json).toHaveBeenCalledWith({
+      message: 'Invalid Input Type',
+      errors: expect.any(Array)
+    });
     expect(nextFunction).not.toHaveBeenCalled();
   });
 });
+

@@ -10,14 +10,14 @@ export const validate = (schema: ZodSchema) =>
         params: req.params,
       });
       next();
-  } catch (error) {
-    if (error instanceof ZodError) {
-      const zodError = error as any;
-      return res.status(400).json({
-        message: 'Invalid Input Type',
-        errors: zodError.errors.map((e: any) => `${e.path.join('.')} - ${e.message}`)
-      });
+    } catch (error) {
+      if (error instanceof ZodError) {
+        return res.status(400).json({
+          message: 'Invalid Input Type',
+          errors: error.issues.map((e) => `${e.path.join('.')} - ${e.message}`)
+        });
+      }
+      next(error);
     }
-    next(error);
-  }
-};
+  };
+

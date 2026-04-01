@@ -20,12 +20,15 @@ describe('Booking Controller API Tests', () => {
     const flight = await Flight.create({
       flightNumber: '6E-456',
       airline: 'IndiGo Mock',
+      airlineLogo: 'https://example.com/logo.png',
       source: 'Delhi (DEL)',
       destination: 'Pune (PNQ)',
       departureTime: new Date(),
       arrivalTime: new Date(),
+      duration: 120,
       price: 4500,
-      availableSeats: 2, // Low available seats to trigger exact calculations
+      availableSeats: 2,
+      cabinClass: 'Economy'
     });
 
     flightId = flight._id.toString();
@@ -38,15 +41,16 @@ describe('Booking Controller API Tests', () => {
       .send({
         flightId,
         passengerName: 'Booking User',
-        seatNumber: '12A'
+        seatNumber: '12A',
+        mealPreference: 'Veg'
       });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('_id');
     expect(response.body.passengerName).toBe('Booking User');
-    expect(response.body.flightId).toBe(flightId);
+    expect(response.body.totalPrice).toBe(4500); // Verify price locking
+    expect(response.body.bookingStatus).toBe('Confirmed');
 
-    // Verify seats went from 2 to 1 inside MongoDB
     const updatedFlight = await Flight.findById(flightId);
     expect(updatedFlight?.availableSeats).toBe(1);
   });
