@@ -7,9 +7,13 @@ export const getFlights = async (req: Request, res: Response) => {
 
     const skip = (Number(page) - 1) * Number(limit);
 
+    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
     let query: any = {};
-    if (source) query.source = new RegExp(`^${source}$`, 'i');
-    if (destination) query.destination = new RegExp(`^${destination}$`, 'i');
+    if (source) query.source = new RegExp(escapeRegex(source as string), 'i');
+    if (destination) query.destination = new RegExp(escapeRegex(destination as string), 'i');
+    
+    console.log(`Searching flights from ${source} to ${destination} with query:`, query);
     
     if (date) {
       const searchDate = new Date(date as string);
@@ -136,14 +140,12 @@ export const searchTrips = async (req: Request, res: Response) => {
   try {
     const { source, destination, departureDate, returnDate, cabinClass, stops } = req.query;
 
-    if (!source || !destination || !departureDate) {
-      return res.status(400).json({ message: 'Source, destination, and departureDate are required' });
-    }
+    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     // Outbound Search (Source -> Destination)
     let outboundQuery: any = {
-      source: new RegExp(`^${source}$`, 'i'),
-      destination: new RegExp(`^${destination}$`, 'i'),
+      source: new RegExp(escapeRegex(source as string), 'i'),
+      destination: new RegExp(escapeRegex(destination as string), 'i'),
     };
 
     const depDate = new Date(departureDate as string);
@@ -160,8 +162,8 @@ export const searchTrips = async (req: Request, res: Response) => {
     let inboundFlights: any[] = [];
     if (returnDate) {
       let inboundQuery: any = {
-        source: new RegExp(`^${destination}$`, 'i'),
-        destination: new RegExp(`^${source}$`, 'i'),
+        source: new RegExp(escapeRegex(destination as string), 'i'),
+        destination: new RegExp(escapeRegex(source as string), 'i'),
       };
 
       const retDate = new Date(returnDate as string);
@@ -193,6 +195,40 @@ export const searchTrips = async (req: Request, res: Response) => {
       tripType: returnDate ? 'Round-trip' : 'One-way'
     });
 
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const getAirports = async (req: Request, res: Response) => {
+  try {
+    const sources = await Flight.distinct('source');
+    const destinations = await Flight.distinct('destination');
+    const all = Array.from(new Set([...sources, ...destinations]));
+    
+    const airports = all.map(str => {
+      const match = str.match(/(.+) \((.+)\)/);
+      if (match) {
+        return { city: match[1], code: match[2], name: `${match[1]} International Airport` };
+      }
+      return { city: str, code: str.substring(0,3).toUpperCase(), name: `${str} Airport` };
+    });
+
+    res.json(airports);
+  } catch (error) {
+    res.status(500).json({ message: (error as Error).message });
+  }
+};
+
+export const getStats = async (req: Request, res: Response) => {
+  try {
+    const airlinesCount = (await Flight.distinct('airline')).length;
+    res.json({
+      airlines: airlinesCount,
+      travellers: '1M+',
+      countries: 195,
+      support: '24/7'
+    });
   } catch (error) {
     res.status(500).json({ message: (error as Error).message });
   }

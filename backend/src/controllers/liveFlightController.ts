@@ -17,11 +17,30 @@ export const getLiveStatus = async (req: Request, res: Response) => {
       
       res.json({
         flight_status: currentFlight.flight_status,
-        departure: currentFlight.departure,
-        arrival: currentFlight.arrival,
+        departure: {
+          iata: currentFlight.departure.iata,
+          city: currentFlight.departure.city,
+          scheduled: currentFlight.departure.scheduled,
+          estimated: currentFlight.departure.estimated,
+          terminal: currentFlight.departure.terminal,
+          gate: currentFlight.departure.gate
+        },
+        arrival: {
+          iata: currentFlight.arrival.iata,
+          city: currentFlight.arrival.city,
+          scheduled: currentFlight.arrival.scheduled,
+          estimated: currentFlight.arrival.estimated,
+          terminal: currentFlight.arrival.terminal,
+          gate: currentFlight.arrival.gate
+        },
         live: currentFlight.live || null,
         airline: currentFlight.airline,
-        flight: currentFlight.flight
+        flight: currentFlight.flight,
+        aircraft: currentFlight.aircraft || null,
+        delay: {
+          departure: currentFlight.departure.delay || 0,
+          arrival: currentFlight.arrival.delay || 0
+        }
       });
     } else {
       res.status(404).json({ message: 'No live tracking data found for this flight' });

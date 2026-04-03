@@ -1,11 +1,14 @@
 import express from 'express';
-import { getFlights, createFlight, getFlightById, updateFlight, deleteFlight, searchTrips } from '../controllers/flightController';
+import { getFlights, createFlight, getFlightById, updateFlight, deleteFlight, searchTrips, getAirports, getStats } from '../controllers/flightController';
 import { getLiveStatus } from '../controllers/liveFlightController';
 import { protect } from '../middleware/authMiddleware';
 import { validate } from '../middleware/validateMiddleware';
 import { updateFlightSchema, createFlightSchema } from '../validators';
 
 const router = express.Router();
+
+router.get('/airports', getAirports);
+router.get('/stats', getStats);
 
 /**
  * @swagger
